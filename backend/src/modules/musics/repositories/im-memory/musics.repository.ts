@@ -14,7 +14,7 @@ export class MusicInMemoryRepository implements MusicsRepository {
   async findAll(): Promise<Music[]> {
     return this.database;
   }
-  async findOne(id: string): Promise<Music> {
+  async findOne(id: string): Promise<Music>{
     const music = this.database.find((music) => music.id === id) as Music;
     return music;
   }
