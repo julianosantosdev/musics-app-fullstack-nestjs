@@ -1,26 +1,52 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersRepository } from './repositories/users.repository';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(private userRepository: UsersRepository) {}
+
+  async create(createUserDto: CreateUserDto) {
+    const findUser = await this.userRepository.findByMail(createUserDto.email);
+
+    if (findUser) {
+      throw new ConflictException('This User Already Exists!');
+    }
+
+    const user = await this.userRepository.create(createUserDto);
+    return user;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    return await this.userRepository.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    const findUser = await this.userRepository.findOne(id);
+    if (!findUser) {
+      throw new NotFoundException('User Not Found!');
+    }
+    return await this.userRepository.findOne(id);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const findUser = await this.userRepository.findOne(id);
+    if (!findUser) {
+      throw new NotFoundException('User Not Found!');
+    }
+    return this.userRepository.update(id, updateUserDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    const findUser = await this.userRepository.findOne(id);
+    if (!findUser) {
+      throw new NotFoundException('User Not Found!');
+    }
+    return this.userRepository.delete(id);
   }
 }
