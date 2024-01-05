@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 import { MusicsService } from './musics.service';
 import { CreateMusicDTO } from './dtos/create-music.dto';
 
@@ -17,7 +24,7 @@ export class MusicController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.musicsService.findOne(id);
   }
 }
