@@ -30,7 +30,7 @@ model Music {
   cover_image String?
   music_url   String?
   user        User    @relation(fields: [user_id], references: [id])
-  user_id      String
+  user_id     String
 
   @@map("musics")
 }
